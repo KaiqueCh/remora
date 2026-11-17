@@ -1,0 +1,8 @@
+configs/*.ini
+.config/
+*.ini
+node_modules/
+package-lock.json
+dist/
+.vscode/
+.claude/

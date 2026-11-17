@@ -1,0 +1,112 @@
+/* =====================================================================
+   Estados: carregando (skeleton, sem spinner no meio da tabela), ação em
+   andamento (spinner no botão clicado), erro inline e estados vazios.
+   ===================================================================== */
+
+/* ---- Skeleton ----------------------------------------------------------- */
+.skeleton {
+  display: inline-block;
+  height: var(--skeleton-line-height);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--skeleton-base) 0%, var(--skeleton-shine) 50%, var(--skeleton-base) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-pill {
+  width: var(--skeleton-pill-width);
+  height: var(--pill-height);
+}
+
+.skeleton-line {
+  width: var(--skeleton-line-width);
+  max-width: 100%;
+}
+
+.skeleton-line.is-short {
+  width: var(--skeleton-line-width-short);
+}
+
+.skeleton-dots {
+  width: var(--skeleton-dots-width);
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* ---- Ação em andamento ---------------------------------------------------- */
+.icon-btn.is-busy {
+  opacity: 1;
+  color: var(--warn);
+  cursor: progress;
+}
+
+.spin svg,
+.icon-btn.is-busy svg {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Erro inline na linha ---------------------------------------------- */
+.row-error {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: var(--fs-3);
+  color: var(--err-text);
+}
+
+/* ---- Estados vazios -------------------------------------------------- */
+.table-empty-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--empty-icon-size);
+  height: var(--empty-icon-size);
+  margin: 0 auto var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+.table-empty-icon svg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.table-empty-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.table-empty-detail {
+  font-size: var(--fs-body-sm);
+  color: var(--text-2);
+}
+
+.table-empty-actions {
+  margin-top: var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .spin svg,
+  .icon-btn.is-busy svg {
+    animation: none;
+  }
+}

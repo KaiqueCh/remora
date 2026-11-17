@@ -1,0 +1,48 @@
+{
+    "name": "remora",
+    "productName": "Remora",
+    "version": "2.4.6",
+    "description": "Remora — gerenciador remoto de serviços Windows e Docker Compose via SSH",
+    "main": "src/main.js",
+    "scripts": {
+        "start": "electron .",
+        "test": "node --test test/docker.test.js test/windows.test.js test/scBatch.test.js test/runner.test.js test/sshPool.test.js test/userDataMigration.test.js",
+        "build": "electron-builder",
+        "build-dir": "electron-builder --dir"
+    },
+    "build": {
+        "asar": false,
+        "appId": "com.kaique.remora",
+        "productName": "Remora",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "src/**/*",
+            "package.json"
+        ],
+        "extraResources": [
+            {
+                "from": "node_modules/electron/dist/ffmpeg.dll",
+                "to": "./"
+            }
+        ],
+        "win": {
+            "target": "nsis",
+            "icon": "src/ui/icon.ico"
+        },
+        "nsis": {
+            "artifactName": "Remora-Setup-${version}.exe",
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        }
+    },
+    "dependencies": {
+        "ini": "^5.0.0",
+        "ssh2": "^1.11.0"
+    },
+    "devDependencies": {
+        "electron": "^36.2.0",
+        "electron-builder": "^24.13.3"
+    }
+}

@@ -1,0 +1,491 @@
+/* =====================================================================
+   Design tokens do redesign "Padrão" (tema escuro único).
+
+   Três camadas — o CSS de componente só consome a camada 3 (ou a 2):
+     1. PRIMITIVOS   valores crus, sem significado (paleta, escalas)
+     2. SEMÂNTICOS   significado de uso (nomes definidos no Redesign.md:
+                     --bg, --surface, --text-2, --accent, --ok-bg…)
+     3. COMPONENTES  ajustes por componente (botão, tabela, painel…)
+
+   Fontes empacotadas em ../fonts (sem CDN: o app funciona offline).
+   Licenças: fonts/OFL-Inter.txt e fonts/OFL-JetBrainsMono.txt (SIL OFL 1.1).
+   ===================================================================== */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/inter-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+}
+
+/* =====================================================================
+   1. PRIMITIVOS
+   ===================================================================== */
+:root {
+  /* Neutros escuros ("ink"), do mais escuro ao mais claro */
+  --color-ink-0: #0b0d10;
+  --color-ink-1: #0f1115;
+  --color-ink-2: #10131a;
+  --color-ink-3: #13161c;
+  --color-ink-4: #14171d;
+  --color-ink-5: #161920;
+  --color-ink-6: #171a21;
+  --color-ink-7: #181c25;
+  --color-ink-8: #1a1e27;
+  --color-ink-9: #1c2029;
+  --color-ink-10: #22262f;
+  --color-ink-11: #2a2f3a;
+  --color-ink-12: #3a404d;
+
+  /* Neutros claros ("fog"), do mais escuro ao mais claro */
+  --color-fog-1: #8b93a1;
+  --color-fog-2: #a3aab7;
+  --color-fog-3: #b4bac5;
+  --color-fog-4: #e8eaee;
+  --color-white: #ffffff;
+
+  /* Azul (marca / ação) */
+  --color-navy-900: #161c2b;
+  --color-navy-800: #1a2440;
+  --color-navy-600: #2d3e6e;
+  --color-blue-700: #2c5bc4;
+  --color-blue-600: #3567d8;
+  --color-blue-500: #3d73e8;
+  --color-blue-450: #4a7ff0;
+  --color-blue-300: #7fa6f5;
+  --color-blue-200: #a5c1fa;
+
+  /* Status */
+  --color-green-500: #3fb950;
+  --color-green-300: #6bd47f;
+  --color-amber-500: #d9a520;
+  --color-amber-300: #e8c15a;
+  --color-red-500: #f0524a;
+  --color-red-300: #ff8a84;
+
+  /* Cores extras só para a paleta ANSI dos logs */
+  --color-red-200: #ffa39e;
+  --color-green-200: #8ee6a0;
+  --color-amber-200: #f2d27e;
+  --color-violet-300: #d38ef0;
+  --color-violet-200: #e2adf6;
+  --color-cyan-300: #6fd3e0;
+  --color-cyan-200: #9ce4ee;
+
+  /* Variações translúcidas (fundos tingidos) */
+  --color-green-500-a13: rgb(63 185 80 / 0.13);
+  --color-amber-500-a14: rgb(217 165 32 / 0.14);
+  --color-red-500-a14: rgb(240 82 74 / 0.14);
+  --color-red-500-a45: rgb(240 82 74 / 0.45);
+  --color-fog-1-a16: rgb(139 147 161 / 0.16);
+  --color-blue-500-a16: rgb(61 115 232 / 0.16);
+  --color-blue-500-a38: rgb(61 115 232 / 0.38);
+  --color-black-a62: rgb(4 5 8 / 0.62);
+
+  /* Espaçamento (base 4px) */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-3-5: 14px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Tipografia */
+  --font-family-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace;
+  --font-size-12: 12px;
+  --font-size-12-5: 12.5px;
+  --font-size-13: 13px;
+  --font-size-13-5: 13.5px;
+  --font-size-14: 14px;
+  --font-size-17: 17px;
+  --font-size-22: 22px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+
+  /* Raios */
+  --radius-1: 6px;
+  --radius-1-5: 7px;
+  --radius-2: 8px;
+  --radius-2-5: 9px;
+  --radius-3: 10px;
+  --radius-4: 12px;
+  --radius-full: 999px;
+
+  /* Movimento */
+  --duration-150: 150ms;
+  --duration-180: 180ms;
+  --duration-200: 200ms;
+  --easing-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Elevação */
+  --shadow-1: 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-2: 0 24px 64px rgb(0 0 0 / 0.55);
+
+  /* Opacidades */
+  --opacity-35: 0.35;
+  --opacity-45: 0.45;
+}
+
+/* =====================================================================
+   2. SEMÂNTICOS (nomes do Redesign.md — não renomear)
+   ===================================================================== */
+:root {
+  color-scheme: dark;
+
+  /* Superfícies */
+  --bg: var(--color-ink-1); /* fundo da área principal */
+  --rail: var(--color-ink-0); /* barra lateral */
+  --surface: var(--color-ink-3); /* tabela, barras */
+  --surface-2: var(--color-ink-5); /* cabeçalho da tabela, inputs, botões secundários */
+  --surface-3: var(--color-ink-9); /* botões secundários */
+  --surface-hover: var(--color-ink-10);
+  --row-open: var(--color-ink-7); /* linha expandida */
+  --row-selected: var(--color-navy-900);
+  --row-hover: var(--color-ink-6);
+  --subtree: var(--color-ink-2); /* fundo dos containers expandidos */
+  --nav-active: var(--color-ink-8); /* item ativo da navegação */
+  --panel: var(--color-ink-4); /* painéis laterais, diálogos, menus */
+  --scrim: var(--color-black-a62); /* fundo escurecido atrás de painéis */
+
+  /* Bordas */
+  --border: var(--color-ink-10);
+  --border-strong: var(--color-ink-11);
+  --border-hover: var(--color-ink-12);
+
+  /* Texto */
+  --text: var(--color-fog-4);
+  --text-2: var(--color-fog-2); /* secundário, ≥4.5:1 sobre surface */
+  --text-3: var(--color-fog-1); /* só para ícones e itens decorativos */
+  --text-on-accent: var(--color-white);
+
+  /* Destaque (ação primária, seleção, foco) */
+  --accent: var(--color-blue-500);
+  --accent-hover: var(--color-blue-450);
+  --accent-text: var(--color-blue-300);
+  --accent-soft: var(--color-blue-500-a16);
+  --selection: var(--color-blue-500-a38);
+  --focus-ring: var(--accent);
+
+  /* Status */
+  --ok: var(--color-green-500);
+  --ok-text: var(--color-green-300);
+  --ok-bg: var(--color-green-500-a13);
+  --warn: var(--color-amber-500);
+  --warn-text: var(--color-amber-300);
+  --warn-bg: var(--color-amber-500-a14);
+  --err: var(--color-red-500);
+  --err-text: var(--color-red-300);
+  --err-bg: var(--color-red-500-a14);
+  --err-border: var(--color-red-500-a45);
+  --off: var(--color-fog-1);
+  --off-text: var(--color-fog-3);
+  --off-bg: var(--color-fog-1-a16);
+
+  /* Seleção em lote */
+  --batch-selected-bg: var(--color-navy-800);
+  --batch-selected-border: var(--color-navy-600);
+
+  /* Raios */
+  --radius-sm: var(--radius-1);
+  --radius: var(--radius-2);
+  --radius-lg: var(--radius-3);
+  --radius-xl: var(--radius-4);
+  --radius-pill: var(--radius-full);
+
+  /* Tipografia (escala do Redesign.md) */
+  --font-ui: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+  --fs-title: var(--font-size-22); /* título do grupo */
+  --fs-panel: var(--font-size-17); /* título de painel */
+  --fs-body: var(--font-size-14);
+  --fs-body-sm: var(--font-size-13-5);
+  --fs-summary: var(--font-size-13);
+  --fs-2: var(--font-size-12-5); /* secundário */
+  --fs-3: var(--font-size-12);
+
+  /* Espaçamento da página */
+  --page-pad-y: var(--space-6);
+  --page-pad-x: var(--space-7);
+  --gap-section: var(--space-4);
+
+  /* Movimento: só para mudança de estado */
+  --dur: var(--duration-180);
+  --ease-out: var(--easing-out);
+
+  /* Elevação e camadas */
+  --shadow-menu: var(--shadow-1);
+  --shadow-panel: var(--shadow-2);
+  --z-menu: 50;
+  --z-drawer: 100;
+  --z-dialog: 200;
+  --z-toast: 300;
+
+  --disabled-opacity: var(--opacity-45);
+}
+
+/* =====================================================================
+   3. COMPONENTES
+   Dimensões exclusivas de um componente (ex.: largura da barra lateral)
+   vivem aqui como valor cru documentado; cores sempre via semânticos.
+   ===================================================================== */
+:root {
+  /* Pontos de quebra — referência: @media não aceita var(), então os valores
+     são repetidos literalmente em responsive.css */
+  --bp-hide-path: 1252px; /* abaixo: some a coluna Caminho (colunas largas não cabem) */
+  --bp-rail-collapse: 1000px; /* abaixo: barra lateral só com ícones */
+
+  /* Barra lateral */
+  --rail-width: 232px;
+  --rail-width-collapsed: 64px;
+  --rail-pad-x: var(--space-3);
+  --rail-pad-y: var(--space-4);
+  --brand-icon-size: 34px;
+  --brand-icon-radius: var(--radius-2-5);
+  --brand-tile-bg: var(--accent);
+  --brand-glyph: var(--text-on-accent);
+  --group-item-height: 40px;
+  --group-item-radius: var(--radius);
+  --group-item-hover-bg: var(--row-hover);
+  --group-item-active-bg: var(--nav-active);
+  --group-dot-size: 8px;
+  --rail-link-height: 36px;
+
+  /* Cabeçalho e barra de saúde */
+  --page-title-min-width: 240px;
+  --health-bar-height: 6px;
+  --health-bar-gap: var(--space-0-5);
+  --refresh-dot-size: 8px;
+
+  /* Controles (botões, inputs, segmentado) */
+  --control-height: 34px;
+  --control-radius: var(--radius);
+  --control-pad-x: var(--space-3-5);
+  --control-font-size: var(--fs-body-sm);
+  --icon-size: 15px;
+  --icon-size-sm: 13px;
+  --icon-size-lg: 17px;
+
+  /* Fundo do botão primário um tom abaixo do --accent: texto branco sobre
+     #3D73E8 dá 4,36:1 (abaixo do AA 4,5:1); sobre #3567D8 dá 5,1:1. */
+  --btn-primary-bg: var(--color-blue-600);
+  --btn-primary-bg-hover: var(--color-blue-700);
+  --btn-primary-fg: var(--text-on-accent);
+  --btn-secondary-bg: var(--surface-3);
+  --btn-secondary-bg-hover: var(--surface-hover);
+  --btn-secondary-border: var(--border-strong);
+  --btn-secondary-fg: var(--text);
+  --btn-danger-fg: var(--err-text);
+  --btn-danger-border: var(--err-border);
+  --btn-danger-bg-hover: var(--err-bg);
+
+  --icon-btn-size: 30px;
+  --icon-btn-radius: var(--radius-1-5);
+  --icon-btn-border: var(--border-strong);
+  --icon-btn-bg-hover: var(--surface-3);
+  --icon-btn-disabled-opacity: var(--opacity-35);
+
+  --input-height: var(--control-height);
+  --input-bg: var(--surface-2);
+  --input-border: var(--border-strong);
+  --input-fg: var(--text);
+  --input-placeholder: var(--text-3);
+  --input-num-width: 88px;
+  --search-width: 300px;
+
+  --segmented-bg: var(--surface);
+  --segmented-border: var(--border);
+  --segmented-active-bg: var(--surface-3);
+
+  /* Pílulas de status / crítico */
+  --pill-height: 22px;
+  --pill-height-sm: 18px;
+  --pill-pad-x: var(--space-2);
+  --pill-dot-size: 6px;
+  --pill-font-size: var(--fs-3);
+
+  /* Tabela de servidores */
+  --table-radius: var(--radius-lg);
+  --table-head-height: 38px;
+  --table-head-bg: var(--surface-2);
+  --table-cols: 40px 28px minmax(150px, 1.1fr) 56px 100px minmax(170px, 1.6fr) 118px 136px 164px;
+  --table-min-width: 962px; /* soma dos mínimos das colunas acima */
+  /* Abaixo de 1252px (sem Caminho): cabe ao lado da barra lateral até 1000px
+     e, com a barra recolhida, até a largura mínima da janela */
+  --table-cols-narrow: 36px 24px minmax(112px, 1fr) 48px minmax(80px, 0.7fr) 104px 128px 160px;
+  --table-min-width-narrow: 692px;
+  --more-btn-width: 24px;
+  --tree-toggle-size: 24px;
+  --row-min-height: 50px;
+  --row-child-min-height: 42px;
+  --container-dot-size: 7px;
+  --tree-indent: var(--space-6);
+  --tree-guide: var(--border-strong);
+
+  /* Barra de lote e seleção */
+  --batch-radius: var(--radius-lg);
+  --batch-bg: var(--surface);
+  --checkbox-size: 15px;
+
+  /* Painéis laterais (configurações, logs) e diálogos */
+  --drawer-width: 440px;
+  --drawer-width-logs: 760px;
+  --drawer-width-history: 560px;
+  --dialog-width-form: 520px;
+  --input-port-width: 96px;
+  --drawer-margin: var(--space-3);
+  --drawer-radius: var(--radius-xl);
+  --drawer-bg: var(--panel);
+  --dialog-width: 460px;
+  --dialog-radius: var(--radius-xl);
+  --dialog-bg: var(--panel);
+  --menu-width: 168px;
+  --menu-item-height: 32px;
+
+  /* Chave liga/desliga */
+  --switch-width: 34px;
+  --switch-height: 20px;
+  --switch-thumb-size: 14px;
+  --switch-track-off: var(--border-strong);
+  --switch-track-on: var(--accent);
+  --switch-thumb: var(--text);
+
+  /* Toasts */
+  --toast-width: 380px;
+  --toast-offset-bottom: 104px; /* acima da barra de lote */
+  --toast-bg: var(--panel);
+  --toast-border: var(--border-strong);
+
+  /* Skeleton (carregamento) e estados vazios */
+  --skeleton-base: var(--surface-3);
+  --skeleton-shine: var(--border-strong);
+  --skeleton-line-height: 10px;
+  --skeleton-line-width: 120px;
+  --skeleton-line-width-short: 56px;
+  --skeleton-pill-width: 72px;
+  --skeleton-dots-width: 80px;
+  --empty-icon-size: 40px;
+
+  /* Logs em tempo real (fundo --bg; paleta ANSI ajustada ao tema escuro) */
+  --log-bg: var(--bg);
+  --ansi-0: var(--color-ink-12);
+  --ansi-1: var(--color-red-300);
+  --ansi-2: var(--color-green-300);
+  --ansi-3: var(--color-amber-300);
+  --ansi-4: var(--color-blue-300);
+  --ansi-5: var(--color-violet-300);
+  --ansi-6: var(--color-cyan-300);
+  --ansi-7: var(--color-fog-3);
+  --ansi-8: var(--color-fog-1);
+  --ansi-9: var(--color-red-200);
+  --ansi-10: var(--color-green-200);
+  --ansi-11: var(--color-amber-200);
+  --ansi-12: var(--color-blue-200);
+  --ansi-13: var(--color-violet-200);
+  --ansi-14: var(--color-cyan-200);
+  --ansi-15: var(--color-white);
+}
+
+/* =====================================================================
+   Base global ligada aos tokens
+   ===================================================================== */
+::selection {
+  background: var(--selection);
+  color: var(--text);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: var(--space-2-5);
+  height: var(--space-2-5);
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+  border: var(--space-0-5) solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+  background-clip: padding-box;
+}
+
+/* Foco visível (teclado) */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Conteúdo só para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 0ms;
+  }
+}

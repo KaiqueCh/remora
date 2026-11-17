@@ -1,0 +1,127 @@
+/* =====================================================================
+   Larguras. Alvo: janela de 1024 a 1600 px; largura mínima da janela 900 px.
+   Os pontos de quebra repetem --bp-* de tokens.css (@media não aceita var()).
+   - Abaixo de 1252 px: as colunas largas (mínimo de 962 px) não cabem ao
+     lado da barra lateral; some a coluna Caminho (o caminho/serviço vai para
+     uma 2ª linha sob o host) e as colunas fixas estreitam.
+   - Abaixo de 1000 px: a barra lateral recolhe para ícones (iniciais do
+     grupo + ponto de saúde) para a tabela estreita (mínimo de 692 px)
+     continuar cabendo até a largura mínima da janela.
+   ===================================================================== */
+
+@media (max-width: 1251px) {
+  :root {
+    --page-pad-x: var(--space-6);
+    --table-cols: var(--table-cols-narrow);
+    --table-min-width: var(--table-min-width-narrow);
+  }
+
+  .c-path {
+    display: none;
+  }
+
+  /* Sem a coluna Caminho, o serviço Windows (ou o diretório compose) aparece
+     numa 2ª linha sob o host — linhas do mesmo host continuam distinguíveis */
+  .host-sub {
+    display: block;
+  }
+
+  /* Linhas da árvore: Host → Containers passa a terminar na coluna 7 */
+  .c-sub-main {
+    grid-column: 3 / 7;
+  }
+
+  .srv-row .cell {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .srv-row .c-check,
+  .srv-row .c-arrow {
+    padding: 0;
+  }
+
+  .srv-row .c-actions {
+    padding-left: 0;
+    padding-right: var(--space-2);
+  }
+
+  /* recuo dos containers com o padding estreito (seletor mais específico
+     que .srv-row .cell, que zeraria o recuo) */
+  .srv-row.container-row .c-sub-main {
+    padding-left: calc(var(--space-2) + var(--tree-indent));
+  }
+
+  .tree-guide {
+    left: calc(var(--space-2) + var(--space-2));
+  }
+}
+
+@media (max-width: 999px) {
+  .app {
+    grid-template-columns: var(--rail-width-collapsed) minmax(0, 1fr);
+  }
+
+  .rail {
+    align-items: center;
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .brand-text,
+  .rail-label,
+  .group-name,
+  .group-count,
+  .group-item .pill,
+  .rail-link-text,
+  .rail-version {
+    display: none;
+  }
+
+  .rail-section-head {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .rail-nav,
+  .rail-footer {
+    align-items: center;
+    width: 100%;
+  }
+
+  .group-list {
+    align-items: center;
+  }
+
+  .group-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    width: var(--group-item-height);
+    padding: 0;
+  }
+
+  .group-initials {
+    display: inline;
+  }
+
+  .group-item .health-dot {
+    position: absolute;
+    top: var(--space-1);
+    right: var(--space-1);
+  }
+
+  .rail-link {
+    position: relative;
+    justify-content: center;
+    width: var(--group-item-height);
+    padding: 0;
+  }
+
+  .rail-link .history-badge {
+    position: absolute;
+    top: var(--space-1-5);
+    right: var(--space-1-5);
+  }
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remora</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/batch.css" />
+    <link rel="stylesheet" href="css/panels.css" />
+    <link rel="stylesheet" href="css/dialogs.css" />
+    <link rel="stylesheet" href="css/states.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Barra lateral: marca, grupos, histórico/configurações -->
+      <aside class="rail" aria-label="Barra lateral">
+        <div class="rail-brand">
+          <svg class="brand-icon" viewBox="0 0 34 34" aria-hidden="true" focusable="false">
+            <rect class="brand-tile" width="34" height="34" rx="9"></rect>
+            <rect class="brand-glyph" x="7" y="9" width="20" height="16" rx="3" stroke-width="1.8"></rect>
+            <path class="brand-glyph" d="M11 15l2.5 2.2L11 19.4" stroke-width="1.8"></path>
+            <path class="brand-glyph" d="M16 20h5" stroke-width="1.8"></path>
+          </svg>
+          <div class="brand-text">
+            <p class="brand-name">Remora</p>
+            <p class="brand-tagline" id="brand-tagline"></p>
+          </div>
+        </div>
+
+        <nav class="rail-nav" aria-labelledby="rail-groups-label">
+          <div class="rail-section-head">
+            <h2 class="rail-label" id="rail-groups-label">Grupos</h2>
+            <button type="button" class="icon-btn icon-btn-ghost icon-btn-sm" id="group-new" title="Novo grupo" aria-label="Novo grupo" data-icon="plus"></button>
+          </div>
+          <ul class="group-list" id="group-list"></ul>
+        </nav>
+
+        <div class="rail-footer">
+          <button type="button" class="rail-link" id="history-open" aria-haspopup="dialog">
+            <span class="rail-link-icon" data-icon="history" aria-hidden="true"></span>
+            <span class="rail-link-text">Histórico de ações</span>
+            <span class="history-badge" id="history-badge" hidden></span>
+          </button>
+          <button type="button" class="rail-link" id="settings-open" aria-haspopup="dialog">
+            <span class="rail-link-icon" data-icon="sliders-horizontal" aria-hidden="true"></span>
+            <span class="rail-link-text">Configurações</span>
+          </button>
+          <p class="rail-version" id="app-version"></p>
+        </div>
+      </aside>
+
+      <!-- Área principal -->
+      <main class="main">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>
+              <span class="group-title-text" id="group-title"></span>
+              <span class="pill pill-warn" id="group-critical-pill" hidden>Crítico</span>
+            </h1>
+            <p class="page-summary" id="group-summary"></p>
+          </div>
+          <div class="page-refresh">
+            <span class="refresh-dot" id="refresh-dot" aria-hidden="true"></span>
+            <span id="refresh-text"></span>
+            <button type="button" class="btn btn-secondary" id="status-refresh">
+              <span class="btn-ic" data-icon="refresh-cw" aria-hidden="true"></span>Atualizar
+            </button>
+          </div>
+        </div>
+
+        <div class="health-bar" id="health-bar" role="img" aria-label="Sem leitura de status"></div>
+
+        <div class="toolbar">
+          <div class="search">
+            <label for="search-input" class="sr-only">Buscar por host ou caminho</label>
+            <span class="search-icon" data-icon="search" aria-hidden="true"></span>
+            <input type="search" id="search-input" placeholder="Buscar por host ou caminho" autocomplete="off" spellcheck="false" />
+          </div>
+          <div class="segmented" id="status-filter" role="group" aria-label="Filtrar por status">
+            <button type="button" data-filter="all" aria-pressed="true">Todos <span class="seg-count" data-count="all">0</span></button>
+            <button type="button" data-filter="running" aria-pressed="false">Ativos <span class="seg-count" data-count="running">0</span></button>
+            <button type="button" data-filter="partial" aria-pressed="false">Parciais <span class="seg-count" data-count="partial">0</span></button>
+            <button type="button" data-filter="offline" aria-pressed="false">Sem conexão <span class="seg-count" data-count="offline">0</span></button>
+          </div>
+          <button type="button" class="btn btn-primary" id="server-add">
+            <span class="btn-ic" data-icon="plus" aria-hidden="true"></span>Adicionar servidor
+          </button>
+        </div>
+
+        <!-- Tabela de servidores (grade; a árvore docker abre sob a linha) -->
+        <section class="table-card" aria-label="Servidores do grupo">
+          <div class="table-scroll" id="table-scroll">
+            <div class="srv-table" role="table" aria-label="Servidores do grupo">
+              <div class="srv-head" role="rowgroup">
+                <div class="srv-row" role="row">
+                  <div class="cell c-check" role="columnheader">
+                    <input type="checkbox" class="row-check" id="select-all" aria-label="Selecionar todos os servidores visíveis" />
+                  </div>
+                  <div class="cell c-arrow" role="columnheader"><span class="sr-only">Expandir</span></div>
+                  <div class="cell c-host" role="columnheader">Host</div>
+                  <div class="cell c-port" role="columnheader">Porta</div>
+                  <div class="cell c-user" role="columnheader">Usuário</div>
+                  <div class="cell c-path" role="columnheader">Caminho / serviço</div>
+                  <div class="cell c-containers" role="columnheader">Containers</div>
+                  <div class="cell c-status" role="columnheader">Status</div>
+                  <div class="cell c-actions" role="columnheader">Ações</div>
+                </div>
+              </div>
+              <div class="srv-body" role="rowgroup" id="servers-body"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Barra de lote: sem seleção vale para o grupo todo -->
+        <div class="batch-bar" id="batch-bar" role="region" aria-label="Ações em lote">
+          <div class="batch-info" id="batch-info" aria-live="polite"></div>
+          <button type="button" class="btn btn-link" id="batch-clear" hidden>Limpar seleção</button>
+          <span class="batch-spacer"></span>
+          <div class="batch-actions">
+            <button type="button" class="btn btn-secondary" id="batch-start">
+              <span class="btn-ic tone-ok" data-icon="play" aria-hidden="true"></span><span id="batch-start-label">Iniciar todos</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="batch-stop">
+              <span class="btn-ic tone-err" data-icon="square" aria-hidden="true"></span><span id="batch-stop-label">Parar todos</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="batch-restart">
+              <span class="btn-ic" data-icon="rotate-cw" aria-hidden="true"></span><span id="batch-restart-label">Reiniciar todos</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toasts (feedback imediato) -->
+    <div class="toast-container" id="toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Diálogo do formulário de servidor (adicionar/editar) -->
+    <div class="drawer-scrim dialog-scrim" id="server-modal" hidden>
+      <div class="dialog dialog-form" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <header class="dialog-head">
+          <h2 class="dialog-title" id="modal-title">Servidor</h2>
+          <span class="toolbar-spacer"></span>
+          <button type="button" class="icon-btn icon-btn-ghost" id="modal-close" title="Fechar (Esc)" aria-label="Fechar" data-icon="x"></button>
+        </header>
+        <form class="dialog-body" id="server-form" novalidate>
+          <label class="field" for="f-type">
+            <span class="field-label">Tipo</span>
+            <select class="input" id="f-type">
+              <option value="windows">Serviço Windows</option>
+              <option value="docker">Docker (compose)</option>
+            </select>
+          </label>
+          <div class="field-row">
+            <label class="field" for="f-host">
+              <span class="field-label">Host</span>
+              <input type="text" class="input mono" id="f-host" required autocomplete="off" spellcheck="false" />
+            </label>
+            <label class="field" for="f-port">
+              <span class="field-label">Porta</span>
+              <input type="number" class="input mono" id="f-port" value="22" min="1" max="65535" />
+            </label>
+          </div>
+          <label class="field" for="f-username">
+            <span class="field-label">Usuário</span>
+            <input type="text" class="input" id="f-username" required autocomplete="off" spellcheck="false" />
+          </label>
+          <label class="field" id="f-service-row" for="f-service">
+            <span class="field-label">Nome do serviço</span>
+            <input type="text" class="input mono" id="f-service" autocomplete="off" spellcheck="false" />
+          </label>
+          <label class="field" id="f-servicepath-row" for="f-servicePath">
+            <span class="field-label">Caminho do serviço <span class="field-optional">(opcional — detectado automaticamente)</span></span>
+            <input type="text" class="input mono" id="f-servicePath" placeholder="C:\services\meuapp" autocomplete="off" spellcheck="false" />
+          </label>
+          <label class="field" id="f-composedir-row" for="f-composeDir" hidden>
+            <span class="field-label">Diretório base (compose)</span>
+            <input type="text" class="input mono" id="f-composeDir" placeholder="/meuapp" autocomplete="off" spellcheck="false" />
+          </label>
+          <label class="field" for="f-password">
+            <span class="field-label">Senha</span>
+            <input type="password" class="input" id="f-password" autocomplete="new-password" aria-describedby="f-password-hint" />
+            <small class="field-help" id="f-password-hint"></small>
+          </label>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+        <footer class="dialog-foot">
+          <button type="button" class="btn btn-secondary" id="modal-test" hidden>Testar conexão</button>
+          <span class="toolbar-spacer"></span>
+          <button type="button" class="btn btn-secondary" id="modal-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="modal-save" form="server-form">Salvar</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Confirmação de ação em grupo crítico -->
+    <div class="drawer-scrim dialog-scrim" id="confirm-dialog" hidden>
+      <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <header class="dialog-head">
+          <span class="dialog-icon" data-icon="triangle-alert" aria-hidden="true"></span>
+          <h2 class="dialog-title" id="confirm-title"></h2>
+        </header>
+        <div class="dialog-body">
+          <p class="dialog-message" id="confirm-message"></p>
+          <ul class="dialog-list" id="confirm-list"></ul>
+        </div>
+        <footer class="dialog-foot">
+          <button type="button" class="btn btn-secondary" id="confirm-cancel">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirm-ok"></button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Painel de logs em tempo real (docker compose logs -f / console.log) -->
+    <div class="drawer-scrim" id="logs-drawer" hidden>
+      <aside class="drawer drawer-logs" role="dialog" aria-modal="true" aria-labelledby="logs-title" aria-describedby="logs-subtitle">
+        <header class="drawer-head">
+          <div class="drawer-head-text">
+            <h2 class="drawer-title" id="logs-title">Logs</h2>
+            <p class="drawer-subtitle" id="logs-subtitle"></p>
+          </div>
+          <button type="button" class="icon-btn icon-btn-ghost" id="logs-close" title="Fechar (Esc)" aria-label="Fechar logs" data-icon="x"></button>
+        </header>
+        <div class="logs-toolbar">
+          <label class="field field-inline" for="logs-tail">
+            <span class="field-label">Últimas linhas</span>
+            <input type="number" class="input input-num" id="logs-tail" value="100" min="0" max="5000" />
+          </label>
+          <span class="logs-state" id="logs-state" role="status">Conectando…</span>
+          <span class="toolbar-spacer"></span>
+          <button type="button" class="btn btn-secondary" id="logs-copy"><span class="btn-ic" data-icon="copy" aria-hidden="true"></span>Copiar</button>
+          <button type="button" class="btn btn-secondary" id="logs-save"><span class="btn-ic" data-icon="download" aria-hidden="true"></span>Salvar</button>
+          <button type="button" class="btn btn-secondary" id="logs-clear"><span class="btn-ic" data-icon="eraser" aria-hidden="true"></span>Limpar</button>
+        </div>
+        <pre class="logs-output" id="logs-output" tabindex="0" aria-label="Saída do log"></pre>
+      </aside>
+    </div>
+
+    <!-- Painel de configurações -->
+    <div class="drawer-scrim" id="settings-drawer" hidden>
+      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <header class="drawer-head">
+          <h2 class="drawer-title" id="settings-title">Configurações</h2>
+          <button type="button" class="icon-btn icon-btn-ghost" id="settings-close" title="Fechar (Esc)" aria-label="Fechar configurações" data-icon="x"></button>
+        </header>
+        <form class="drawer-body" id="settings-form" novalidate>
+          <section class="drawer-section" id="settings-group-section" aria-labelledby="settings-group-title">
+            <h3 class="drawer-section-title" id="settings-group-title">Grupo atual</h3>
+            <label class="field" for="set-group-name">
+              <span class="field-label">Nome do grupo</span>
+              <input type="text" class="input" id="set-group-name" autocomplete="off" maxlength="80" />
+            </label>
+            <div class="switch-row">
+              <div class="switch-text">
+                <span class="field-label" id="set-critical-label">Grupo crítico</span>
+                <p class="field-help" id="set-critical-help">Toda ação (iniciar, parar ou reiniciar) nos servidores deste grupo pede confirmação antes de executar.</p>
+              </div>
+              <button type="button" class="switch" id="set-critical" role="switch" aria-checked="false" aria-labelledby="set-critical-label" aria-describedby="set-critical-help">
+                <span class="switch-thumb" aria-hidden="true"></span>
+              </button>
+            </div>
+          </section>
+
+          <section class="drawer-section" aria-labelledby="settings-poll-title">
+            <h3 class="drawer-section-title" id="settings-poll-title">Atualização automática do status</h3>
+            <div class="segmented" id="set-poll-presets" role="group" aria-label="Intervalo de atualização">
+              <button type="button" data-seconds="0" aria-pressed="false">Desligada</button>
+              <button type="button" data-seconds="5" aria-pressed="false">5 s</button>
+              <button type="button" data-seconds="15" aria-pressed="false">15 s</button>
+              <button type="button" data-seconds="30" aria-pressed="false">30 s</button>
+              <button type="button" data-seconds="60" aria-pressed="false">60 s</button>
+            </div>
+            <label class="field field-inline" for="set-poll">
+              <span class="field-label">Outro intervalo</span>
+              <input type="number" class="input input-num" id="set-poll" min="0" max="3600" step="1" inputmode="numeric" aria-describedby="set-poll-help" />
+              <span class="field-suffix">segundos</span>
+            </label>
+            <p class="field-help" id="set-poll-help">Desligada: o status só muda ao clicar em Atualizar. Mínimo de 5 segundos.</p>
+          </section>
+
+          <section class="drawer-section" aria-labelledby="settings-groups-title">
+            <h3 class="drawer-section-title" id="settings-groups-title">Grupos</h3>
+            <div class="drawer-buttons">
+              <button type="button" class="btn btn-secondary" id="set-group-new"><span class="btn-ic" data-icon="plus" aria-hidden="true"></span>Novo grupo</button>
+              <button type="button" class="btn btn-secondary" id="group-import"><span class="btn-ic" data-icon="upload" aria-hidden="true"></span>Importar .ini ou .json</button>
+            </div>
+          </section>
+
+          <section class="drawer-section" id="settings-danger" aria-labelledby="settings-danger-title">
+            <h3 class="drawer-section-title" id="settings-danger-title">Zona de risco</h3>
+            <div class="danger-box">
+              <p class="danger-text" id="danger-text"></p>
+              <button type="button" class="btn btn-danger" id="group-delete"><span class="btn-ic" data-icon="trash-2" aria-hidden="true"></span>Excluir grupo</button>
+            </div>
+          </section>
+
+          <p class="form-error" id="settings-error" role="alert"></p>
+        </form>
+        <footer class="drawer-foot">
+          <button type="button" class="btn btn-secondary" id="settings-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="settings-save" form="settings-form">Salvar alterações</button>
+        </footer>
+      </aside>
+    </div>
+
+    <!-- Painel do histórico de ações (eventos desta sessão) -->
+    <div class="drawer-scrim" id="history-modal" hidden>
+      <aside class="drawer drawer-history" role="dialog" aria-modal="true" aria-labelledby="history-title">
+        <header class="drawer-head">
+          <h2 class="drawer-title" id="history-title">Histórico de ações</h2>
+          <div class="drawer-head-actions">
+            <button type="button" class="btn btn-secondary" id="history-clear"><span class="btn-ic" data-icon="eraser" aria-hidden="true"></span>Limpar</button>
+            <button type="button" class="icon-btn icon-btn-ghost" id="history-close" title="Fechar (Esc)" aria-label="Fechar histórico" data-icon="x"></button>
+          </div>
+        </header>
+        <div class="history-log" id="history-log" role="log" aria-live="polite" tabindex="0"></div>
+      </aside>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

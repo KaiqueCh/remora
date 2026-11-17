@@ -1,0 +1,409 @@
+/* =====================================================================
+   Tabela de servidores + árvore docker (projeto → containers) e menu "⋯".
+   Linhas em CSS grid com as colunas de --table-cols; as linhas da árvore
+   usam a mesma grade, então status e ações alinham com o cabeçalho.
+   ===================================================================== */
+
+/* Só rola na horizontal abaixo da soma das larguras mínimas das colunas */
+.srv-table {
+  min-width: var(--table-min-width);
+  font-size: var(--fs-body-sm);
+}
+
+/* Cabeçalho fixo (38px, --surface-2) */
+.srv-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--table-head-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.srv-row {
+  display: grid;
+  grid-template-columns: var(--table-cols);
+  align-items: center;
+  min-height: var(--row-min-height);
+  border-bottom: 1px solid var(--border);
+  transition: background-color var(--dur) var(--ease-out);
+}
+
+.srv-head .srv-row {
+  min-height: var(--table-head-height);
+  border-bottom: 0;
+}
+
+.srv-head .srv-row .cell {
+  color: var(--text-2);
+  font-family: var(--font-ui);
+  font-size: var(--fs-3);
+  font-weight: var(--font-weight-semibold);
+}
+
+.srv-body > .srv-row:hover {
+  background: var(--row-hover);
+}
+
+.srv-row.is-open,
+.srv-body > .srv-row.is-open:hover {
+  background: var(--row-open);
+  border-bottom-color: transparent;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0 var(--space-3);
+  overflow: hidden;
+}
+
+/* overflow visível: o contorno de foco (2px + 2px) não é cortado */
+.c-check,
+.c-arrow {
+  justify-content: center;
+  padding: 0;
+  overflow: visible;
+}
+
+.c-arrow {
+  justify-content: flex-start;
+}
+
+/* 4 botões de 30px + o "⋯" (24px) cabem nos 164px da coluna */
+.c-actions {
+  justify-content: flex-end;
+  padding-left: 0;
+  padding-right: var(--space-2);
+  overflow: visible; /* não corta o contorno de foco dos botões */
+}
+
+.truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-summary);
+}
+
+.c-port {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+.c-user {
+  color: var(--text);
+}
+
+.key-ic {
+  display: inline-flex;
+  color: var(--text-3);
+}
+
+.key-ic svg {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.c-path {
+  color: var(--text-2);
+}
+
+.muted-tag {
+  font-size: var(--fs-3);
+  color: var(--text-2);
+}
+
+/* Containers: um ponto por container (ordem do compose) + "7/8" */
+/* Os pontos podem encolher (são decorativos); a contagem nunca é cortada */
+.c-containers {
+  gap: var(--space-1-5);
+  padding-left: var(--space-1-5);
+  padding-right: var(--space-1-5);
+}
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cdot {
+  width: var(--container-dot-size);
+  height: var(--container-dot-size);
+  border-radius: var(--radius-pill);
+  background: var(--off);
+  flex-shrink: 0;
+}
+
+.cdot.is-ok {
+  background: var(--ok);
+}
+
+.cdot.is-warn {
+  background: var(--warn);
+}
+
+.cdot.is-err {
+  background: var(--err);
+}
+
+.cdot-more,
+.count {
+  font-size: var(--fs-3);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.count {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+
+/* Ações da linha */
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+}
+
+.icon-btn.more-btn {
+  width: var(--more-btn-width);
+}
+
+.icon-btn.tone-ok {
+  color: var(--ok);
+}
+
+.icon-btn.tone-ok:hover:not(:disabled) {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+
+.icon-btn.tone-err {
+  color: var(--err);
+}
+
+.icon-btn.tone-err:hover:not(:disabled) {
+  background: var(--err-bg);
+  color: var(--err-text);
+}
+
+/* Host: 2ª linha com o serviço/diretório (só sem a coluna Caminho) e o erro */
+.c-host {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-0-5);
+}
+
+.c-host > span {
+  max-width: 100%;
+}
+
+.host-sub {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-3);
+  color: var(--text-2);
+}
+
+/* Seta de expandir: cabe na coluna de 28px (e o foco aparece inteiro) */
+.icon-btn.tree-toggle {
+  width: var(--tree-toggle-size);
+  height: var(--tree-toggle-size);
+}
+
+/* Seta de expandir: gira ao abrir (só mudança de estado anima) */
+.tree-toggle svg {
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.tree-toggle[aria-expanded='true'] svg {
+  transform: rotate(90deg);
+}
+
+/* ---- Árvore docker ------------------------------------------------------ */
+.srv-subtree {
+  background: var(--subtree);
+  border-bottom: 1px solid var(--border);
+}
+
+.sub-row {
+  min-height: var(--row-child-min-height);
+  border-bottom: 0;
+}
+
+/* Conteúdo da linha da árvore ocupa Host → Containers */
+.c-sub-main {
+  grid-column: 3 / 8;
+  position: relative;
+}
+
+.project-row .c-sub-main {
+  gap: var(--space-2-5);
+}
+
+.project-ic {
+  display: inline-flex;
+  color: var(--text-3);
+}
+
+.project-ic svg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.project-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text);
+}
+
+.project-meta {
+  font-size: var(--fs-2);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* Containers recuados com guia vertical de 1px */
+/* a célula ocupa a altura toda: a guia vertical fica contínua */
+.sub-row .c-sub-main {
+  align-self: stretch;
+}
+
+.container-row .c-sub-main {
+  padding-left: calc(var(--space-3) + var(--tree-indent));
+}
+
+.tree-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--space-3) + var(--space-2));
+  width: 1px;
+  background: var(--tree-guide);
+}
+
+.container-name {
+  color: var(--text);
+}
+
+.status-text {
+  font-size: var(--fs-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-text.is-ok {
+  color: var(--ok-text);
+}
+
+.status-text.is-warn {
+  color: var(--warn-text);
+}
+
+.status-text.is-err {
+  color: var(--err-text);
+}
+
+.status-text.is-off {
+  color: var(--off-text);
+}
+
+.subtree-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--row-child-min-height);
+  padding: 0 var(--space-3) 0 calc(var(--space-3) + var(--space-10) + var(--space-7));
+  color: var(--text-2);
+  font-size: var(--fs-2);
+}
+
+.subtree-message.is-err {
+  color: var(--err-text);
+}
+
+/* ---- Estados vazios da tabela ---------------------------------------- */
+.table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  color: var(--text-2);
+}
+
+.table-empty-title {
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text);
+}
+
+.table-empty-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ---- Menu "⋯" (Editar / Excluir) --------------------------------------- */
+.menu {
+  position: fixed;
+  z-index: var(--z-menu);
+  min-width: var(--menu-width);
+  padding: var(--space-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow-menu);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  width: 100%;
+  min-height: var(--menu-item-height);
+  padding: 0 var(--space-2-5);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-body-sm);
+  text-align: left;
+}
+
+.menu-item svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.menu-item .ic {
+  display: inline-flex;
+  color: var(--text-2);
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: var(--surface-3);
+}
+
+.menu-item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.menu-item.is-danger,
+.menu-item.is-danger .ic {
+  color: var(--err-text);
+}

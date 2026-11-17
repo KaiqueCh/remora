@@ -1,0 +1,713 @@
+/* =====================================================================
+   Layout do redesign: barra lateral + área principal (cabeçalho, barra
+   de saúde, barra de ferramentas) e controles básicos (botões, pílulas,
+   segmentado, busca). Só consome tokens (css/tokens.css).
+   ===================================================================== */
+
+/* ---- Base -------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* O atributo hidden sempre vence o display dos componentes (.btn, .pill…) */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ícones SVG herdam a cor do texto; tamanho por contexto */
+svg {
+  flex-shrink: 0;
+}
+
+/* ---- Estrutura: barra lateral + área principal ------------------------- */
+.app {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  height: 100vh;
+}
+
+/* ---- Barra lateral ----------------------------------------------------- */
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-height: 0;
+  padding: var(--rail-pad-y) var(--rail-pad-x);
+  background: var(--rail);
+  border-right: 1px solid var(--border);
+}
+
+.rail-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2-5);
+}
+
+.brand-icon {
+  width: var(--brand-icon-size);
+  height: var(--brand-icon-size);
+  border-radius: var(--brand-icon-radius);
+  flex-shrink: 0;
+}
+
+.brand-icon .brand-tile {
+  fill: var(--brand-tile-bg);
+}
+
+.brand-icon .brand-glyph {
+  fill: none;
+  stroke: var(--brand-glyph);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-name {
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.brand-tagline {
+  margin-top: var(--space-1);
+  font-size: var(--fs-3);
+  line-height: var(--line-height-tight);
+  color: var(--text-2);
+}
+
+.rail-nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.rail-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-1) 0 var(--space-2-5);
+  margin-bottom: var(--space-1-5);
+}
+
+.rail-label {
+  font-size: var(--fs-3);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.group-item {
+  display: grid;
+  grid-template-columns: var(--group-dot-size) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2-5);
+  width: 100%;
+  min-height: var(--group-item-height);
+  padding: 0 var(--space-2-5);
+  border: 0;
+  border-radius: var(--group-item-radius);
+  background: transparent;
+  color: var(--text-2);
+  text-align: left;
+  transition: background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+/* a lista rola (overflow) e cortaria o contorno externo: contorno interno */
+.group-item:focus-visible {
+  outline-offset: -2px;
+}
+
+.group-item:hover {
+  background: var(--group-item-hover-bg);
+  color: var(--text);
+}
+
+.group-item[aria-current='page'] {
+  background: var(--group-item-active-bg);
+  color: var(--text);
+}
+
+.group-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.group-count {
+  font-size: var(--fs-3);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Iniciais do grupo: só com a barra lateral recolhida (responsive.css) */
+.group-initials {
+  display: none;
+  font-size: var(--fs-3);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.group-empty {
+  padding: var(--space-2) var(--space-2-5);
+  font-size: var(--fs-3);
+  color: var(--text-2);
+}
+
+/* Ponto de saúde (grupo, cabeçalho) */
+.health-dot {
+  width: var(--group-dot-size);
+  height: var(--group-dot-size);
+  border-radius: var(--radius-pill);
+  background: var(--off);
+}
+
+.health-dot.is-ok {
+  background: var(--ok);
+}
+
+.health-dot.is-warn {
+  background: var(--warn);
+}
+
+.health-dot.is-err {
+  background: var(--err);
+}
+
+.health-dot.is-none {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border-hover);
+}
+
+.rail-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.rail-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  width: 100%;
+  min-height: var(--rail-link-height);
+  padding: 0 var(--space-2-5);
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--fs-body-sm);
+  text-align: left;
+  transition: background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+.rail-link:hover {
+  background: var(--group-item-hover-bg);
+  color: var(--text);
+}
+
+.rail-link-icon {
+  display: inline-flex;
+  color: var(--text-3);
+}
+
+.rail-link-icon svg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.rail-link-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.history-badge {
+  width: var(--group-dot-size);
+  height: var(--group-dot-size);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.history-badge.has-error {
+  background: var(--err);
+}
+
+.history-badge[hidden] {
+  display: none;
+}
+
+.rail-version {
+  padding: var(--space-1-5) var(--space-2-5) 0;
+  font-size: var(--fs-3);
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Área principal ---------------------------------------------------- */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--page-pad-y) var(--page-pad-x);
+  overflow: hidden;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* O resumo quebra linha antes de empurrar o bloco "Atualizar" para baixo */
+.page-title {
+  flex: 1 1 0;
+  min-width: var(--page-title-min-width);
+}
+
+.page-title h1 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  font-size: var(--fs-title);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.page-title h1 .group-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-summary {
+  margin-top: var(--space-1-5);
+  font-size: var(--fs-summary);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-refresh {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--space-2-5);
+  font-size: var(--fs-2);
+  color: var(--text-2);
+}
+
+.refresh-dot {
+  width: var(--refresh-dot-size);
+  height: var(--refresh-dot-size);
+  border-radius: var(--radius-pill);
+  background: var(--off);
+}
+
+.refresh-dot.is-auto {
+  background: var(--ok);
+}
+
+.refresh-time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Barra de saúde: segmentos proporcionais com 2px de espaço */
+.health-bar {
+  display: flex;
+  gap: var(--health-bar-gap);
+  height: var(--health-bar-height);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.health-seg {
+  min-width: var(--space-1);
+  transition: flex-grow var(--dur) var(--ease-out);
+}
+
+.health-seg.is-ok {
+  background: var(--ok);
+}
+
+.health-seg.is-warn {
+  background: var(--warn);
+}
+
+.health-seg.is-err {
+  background: var(--err);
+}
+
+.health-seg.is-off {
+  background: var(--off);
+}
+
+/* Ainda sem leitura: deixa o trilho aparecer (mantém a proporção) */
+.health-seg.is-loading {
+  background: transparent;
+}
+
+/* ---- Barra de ferramentas ---------------------------------------------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* Ação primária sempre à direita, mesmo quando a barra quebra linha */
+.toolbar > .btn-primary {
+  margin-left: auto;
+}
+
+.search {
+  position: relative;
+  width: var(--search-width);
+  max-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  display: inline-flex;
+  color: var(--text-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-icon svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.search input {
+  width: 100%;
+  height: var(--input-height);
+  padding: 0 var(--space-3) 0 var(--space-8);
+  border: 1px solid var(--input-border);
+  border-radius: var(--control-radius);
+  background: var(--input-bg);
+  color: var(--input-fg);
+  font-size: var(--control-font-size);
+}
+
+.search input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.search input:focus-visible {
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+/* Remove o "x" nativo do input search (há "Limpar filtros" no estado vazio) */
+.search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* Controle segmentado (filtros) */
+.segmented {
+  display: inline-flex;
+  padding: var(--space-0-5);
+  gap: var(--space-0-5);
+  border: 1px solid var(--segmented-border);
+  border-radius: var(--control-radius);
+  background: var(--segmented-bg);
+}
+
+.segmented button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  height: calc(var(--control-height) - var(--space-1) - 2px);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--control-font-size);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+.segmented button:hover {
+  color: var(--text);
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--segmented-active-bg);
+  color: var(--text);
+}
+
+.seg-count {
+  font-size: var(--fs-3);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.segmented button[aria-pressed='true'] .seg-count {
+  color: var(--text);
+}
+
+/* ---- Botões -------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--control-height);
+  padding: 0 var(--control-pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--control-radius);
+  font-size: var(--control-font-size);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
+}
+
+.btn svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.btn-ic {
+  display: inline-flex;
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--btn-primary-bg-hover);
+}
+
+.btn-secondary {
+  background: var(--btn-secondary-bg);
+  border-color: var(--btn-secondary-border);
+  color: var(--btn-secondary-fg);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--btn-secondary-bg-hover);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: var(--btn-danger-border);
+  color: var(--btn-danger-fg);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--btn-danger-bg-hover);
+}
+
+.btn-link {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn:disabled {
+  opacity: var(--disabled-opacity);
+}
+
+/* Botão só de ícone (ações de linha, menus) */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--icon-btn-size);
+  height: var(--icon-btn-size);
+  padding: 0;
+  border: 1px solid var(--icon-btn-border);
+  border-radius: var(--icon-btn-radius);
+  background: transparent;
+  color: var(--text-2);
+  transition: background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+
+.icon-btn svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--icon-btn-bg-hover);
+  color: var(--text);
+}
+
+.icon-btn:disabled {
+  opacity: var(--icon-btn-disabled-opacity);
+}
+
+.icon-btn-ghost {
+  border-color: transparent;
+}
+
+.icon-btn-sm {
+  width: var(--pill-height);
+  height: var(--pill-height);
+}
+
+.icon-btn-sm svg {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* ---- Pílulas ------------------------------------------------------------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  height: var(--pill-height);
+  padding: 0 var(--pill-pad-x);
+  border-radius: var(--radius-pill);
+  font-size: var(--pill-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pill[hidden] {
+  display: none;
+}
+
+.pill-sm {
+  height: var(--pill-height-sm);
+  padding: 0 var(--space-1-5);
+}
+
+.pill-dot {
+  width: var(--pill-dot-size);
+  height: var(--pill-dot-size);
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.pill-ok {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+
+.pill-warn {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+
+.pill-err {
+  background: var(--err-bg);
+  color: var(--err-text);
+}
+
+.pill-off {
+  background: var(--off-bg);
+  color: var(--off-text);
+}
+
+/* ---- Cartão da tabela (rolagem interna) ------------------------------- */
+.table-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--table-radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}

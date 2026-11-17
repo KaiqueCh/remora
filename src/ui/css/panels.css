@@ -1,0 +1,339 @@
+/* =====================================================================
+   Painéis laterais (Configurações, Logs): ancorados à direita, com fundo
+   escurecido; fecham com Esc, X ou clique fora; foco preso no painel.
+   Também: campos de formulário, chave liga/desliga e zona de risco.
+   ===================================================================== */
+
+/* ---- Camada + painel ------------------------------------------------- */
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--drawer-margin);
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease-out);
+}
+
+.drawer-scrim.is-open {
+  opacity: 1;
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  width: var(--drawer-width);
+  max-width: 100%;
+  height: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--drawer-radius);
+  background: var(--drawer-bg);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+  transform: translateX(var(--space-6));
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.drawer-scrim.is-open .drawer {
+  transform: none;
+}
+
+.drawer-logs {
+  width: var(--drawer-width-logs);
+}
+
+.drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.drawer-head-text {
+  min-width: 0;
+}
+
+.drawer-title {
+  font-size: var(--fs-panel);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drawer-subtitle {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2) var(--space-5) var(--space-5);
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.drawer-section:last-of-type {
+  border-bottom: 0;
+}
+
+.drawer-section[hidden] {
+  display: none;
+}
+
+.drawer-section-title {
+  font-size: var(--fs-3);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.drawer-buttons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.drawer-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Campos -------------------------------------------------------------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.field-label {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text);
+}
+
+.field-help,
+.field-suffix {
+  font-size: var(--fs-2);
+  color: var(--text-2);
+}
+
+.input {
+  height: var(--input-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--input-border);
+  border-radius: var(--control-radius);
+  background: var(--input-bg);
+  color: var(--input-fg);
+  font-size: var(--control-font-size);
+}
+
+.input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.input:focus-visible {
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--err);
+}
+
+.input-num {
+  width: var(--input-num-width);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.form-error {
+  min-height: var(--space-4);
+  font-size: var(--fs-2);
+  color: var(--err-text);
+}
+
+/* ---- Chave liga/desliga (role=switch) -------------------------------- */
+.switch-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.switch-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--switch-track-off);
+  transition: background-color var(--dur) var(--ease-out);
+}
+
+.switch-thumb {
+  position: absolute;
+  top: calc((var(--switch-height) - var(--switch-thumb-size)) / 2);
+  left: calc((var(--switch-height) - var(--switch-thumb-size)) / 2);
+  width: var(--switch-thumb-size);
+  height: var(--switch-thumb-size);
+  border-radius: var(--radius-pill);
+  background: var(--switch-thumb);
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.switch[aria-checked='true'] {
+  background: var(--switch-track-on);
+}
+
+.switch[aria-checked='true'] .switch-thumb {
+  transform: translateX(calc(var(--switch-width) - var(--switch-height)));
+}
+
+/* ---- Zona de risco -------------------------------------------------- */
+.danger-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--err-border);
+  border-radius: var(--radius);
+}
+
+.danger-text {
+  font-size: var(--fs-body-sm);
+  color: var(--text-2);
+}
+
+.danger-text strong {
+  color: var(--text);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ---- Logs ------------------------------------------------------------- */
+.logs-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.logs-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--fs-2);
+  color: var(--text-2);
+}
+
+.logs-state::before {
+  content: '';
+  width: var(--pill-dot-size);
+  height: var(--pill-dot-size);
+  border-radius: var(--radius-pill);
+  background: var(--off);
+}
+
+.logs-state.is-live::before {
+  background: var(--ok);
+}
+
+.logs-state.is-error::before {
+  background: var(--err);
+}
+
+.logs-output {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: var(--space-3) var(--space-5);
+  overflow: auto;
+  background: var(--log-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-variant-numeric: tabular-nums;
+}
+
+.logs-output:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Paleta ANSI (16 cores) via tokens --ansi-* */
+.ansi-bold { font-weight: var(--font-weight-bold); }
+.ansi-fg-0 { color: var(--ansi-0); }
+.ansi-fg-1 { color: var(--ansi-1); }
+.ansi-fg-2 { color: var(--ansi-2); }
+.ansi-fg-3 { color: var(--ansi-3); }
+.ansi-fg-4 { color: var(--ansi-4); }
+.ansi-fg-5 { color: var(--ansi-5); }
+.ansi-fg-6 { color: var(--ansi-6); }
+.ansi-fg-7 { color: var(--ansi-7); }
+.ansi-fg-8 { color: var(--ansi-8); }
+.ansi-fg-9 { color: var(--ansi-9); }
+.ansi-fg-10 { color: var(--ansi-10); }
+.ansi-fg-11 { color: var(--ansi-11); }
+.ansi-fg-12 { color: var(--ansi-12); }
+.ansi-fg-13 { color: var(--ansi-13); }
+.ansi-fg-14 { color: var(--ansi-14); }
+.ansi-fg-15 { color: var(--ansi-15); }
+.ansi-fg-ext { color: var(--ansi-7); }
+.ansi-bg-0 { background: var(--ansi-0); }
+.ansi-bg-1 { background: var(--ansi-1); }
+.ansi-bg-2 { background: var(--ansi-2); }
+.ansi-bg-3 { background: var(--ansi-3); }
+.ansi-bg-4 { background: var(--ansi-4); }
+.ansi-bg-5 { background: var(--ansi-5); }
+.ansi-bg-6 { background: var(--ansi-6); }
+.ansi-bg-7 { background: var(--ansi-7); }
+.ansi-bg-8 { background: var(--ansi-8); }
+.ansi-bg-9 { background: var(--ansi-9); }
+.ansi-bg-10 { background: var(--ansi-10); }
+.ansi-bg-11 { background: var(--ansi-11); }
+.ansi-bg-12 { background: var(--ansi-12); }
+.ansi-bg-13 { background: var(--ansi-13); }
+.ansi-bg-14 { background: var(--ansi-14); }
+.ansi-bg-15 { background: var(--ansi-15); }
+.ansi-bg-ext { background: var(--ansi-8); }

@@ -1,0 +1,349 @@
+/* =====================================================================
+   Diálogos centrados (confirmação, formulário de servidor, texto),
+   Histórico de ações (painel) e toasts. Usam a mesma pilha de camadas
+   dos painéis (Esc, clique fora, foco preso).
+   ===================================================================== */
+
+/* ---- Diálogo -------------------------------------------------------- */
+.dialog-scrim {
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-dialog);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: var(--dialog-width);
+  max-width: 100%;
+  max-height: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--dialog-radius);
+  background: var(--dialog-bg);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+  transform: translateY(var(--space-2));
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.drawer-scrim.is-open .dialog {
+  transform: none;
+}
+
+.dialog-form {
+  width: var(--dialog-width-form);
+}
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+}
+
+.dialog-head .toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.dialog-icon {
+  display: inline-flex;
+  color: var(--warn);
+}
+
+.dialog-icon svg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.dialog-title {
+  font-size: var(--fs-panel);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3-5);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-1) var(--space-5) var(--space-4);
+}
+
+.dialog-message {
+  font-size: var(--fs-body-sm);
+  color: var(--text-2);
+}
+
+.dialog-message strong {
+  color: var(--text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dialog-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--subtree);
+  overflow: hidden;
+}
+
+.dialog-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  min-height: var(--menu-item-height);
+  padding: var(--space-1-5) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-body-sm);
+}
+
+.dialog-item:last-child {
+  border-bottom: 0;
+}
+
+.dialog-item .mono {
+  color: var(--text);
+}
+
+.dialog-item-meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--text-2);
+}
+
+.dialog-more {
+  color: var(--text-2);
+}
+
+.dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.dialog-foot .toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* ---- Formulário do servidor -------------------------------------------- */
+.field-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--input-port-width);
+  gap: var(--space-3);
+}
+
+.field-optional {
+  font-weight: var(--font-weight-regular);
+  color: var(--text-2);
+}
+
+.input.mono {
+  font-family: var(--font-mono);
+}
+
+select.input {
+  padding-right: var(--space-8);
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+    linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+  background-position: calc(100% - var(--space-4)) 50%, calc(100% - var(--space-3)) 50%;
+  background-size: var(--space-1-5) var(--space-1-5), var(--space-1-5) var(--space-1-5);
+  background-repeat: no-repeat;
+}
+
+.form-error.is-info {
+  color: var(--text-2);
+}
+
+.form-error.is-ok {
+  color: var(--ok-text);
+}
+
+/* ---- Histórico de ações (painel) ------------------------------------- */
+.drawer-history {
+  width: var(--drawer-width-history);
+}
+
+.drawer-head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.history-log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2) var(--space-5) var(--space-5);
+  font-size: var(--fs-body-sm);
+}
+
+.history-log:focus-visible {
+  outline-offset: -2px;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  word-break: break-word;
+}
+
+.log-line .log-time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  padding-top: var(--space-0-5);
+}
+
+.log-line .log-host {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--text-2);
+}
+
+.log-ok .log-msg {
+  color: var(--ok-text);
+}
+
+.log-error .log-msg {
+  color: var(--err-text);
+}
+
+.log-warn .log-msg {
+  color: var(--warn-text);
+}
+
+.log-empty {
+  padding: var(--space-6) 0;
+  color: var(--text-2);
+  text-align: center;
+}
+
+/* ---- Toasts --------------------------------------------------------------- */
+/* Acima da barra de lote, para não cobrir as ações em lote */
+.toast-container {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--toast-offset-bottom);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: var(--toast-width);
+  max-width: calc(100vw - var(--space-10));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2-5);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-3-5);
+  border: 1px solid var(--toast-border);
+  border-left: 3px solid var(--off);
+  border-radius: var(--radius);
+  background: var(--toast-bg);
+  box-shadow: var(--shadow-menu);
+  color: var(--text);
+  font-size: var(--fs-body-sm);
+  line-height: var(--line-height-normal);
+  opacity: 0;
+  transform: translateY(var(--space-2));
+  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+.toast-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding-top: var(--space-0-5);
+}
+
+.toast-icon svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.toast-msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.toast-close {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--pill-height);
+  height: var(--pill-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+}
+
+.toast-close svg {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.toast-close:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.toast-ok {
+  border-left-color: var(--ok);
+}
+
+.toast-ok .toast-icon {
+  color: var(--ok);
+}
+
+.toast-error {
+  border-left-color: var(--err);
+}
+
+.toast-error .toast-icon {
+  color: var(--err);
+}
+
+.toast-warn {
+  border-left-color: var(--warn);
+}
+
+.toast-warn .toast-icon {
+  color: var(--warn);
+}
+
+.toast-info {
+  border-left-color: var(--accent);
+}
+
+.toast-info .toast-icon {
+  color: var(--accent-text);
+}
