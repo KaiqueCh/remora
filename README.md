@@ -56,6 +56,7 @@ npm install        # instala dependências
 npm start          # executa em modo desenvolvimento (electron .)
 npm test           # roda a suíte de testes
 npm run build      # gera o instalador NSIS em dist/
+npm run release    # publica uma nova versão no GitHub (testes + build + tag + release)
 ```
 
 > **Pré-requisito no servidor de destino:** o host precisa aceitar conexões SSH (OpenSSH).
@@ -85,6 +86,8 @@ remora/
 │   ├── userDataMigration.js # copia os dados da pasta anterior ao rename para Remora
 │   ├── preload.js     # ponte contextBridge (window.api)
 │   └── ui/            # index.html, renderer.js, css/, fonts/, icon.ico
+├── scripts/
+│   └── release.js     # automação de release (npm run release)
 ├── test/              # testes (node --test)
 ├── docs/              # documentação (veja abaixo)
 └── package.json

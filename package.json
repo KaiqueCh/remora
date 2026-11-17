@@ -6,9 +6,10 @@
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
-        "test": "node --test test/docker.test.js test/windows.test.js test/scBatch.test.js test/runner.test.js test/sshPool.test.js test/userDataMigration.test.js",
+        "test": "node --test test/docker.test.js test/windows.test.js test/scBatch.test.js test/runner.test.js test/sshPool.test.js test/userDataMigration.test.js test/release.test.js",
         "build": "electron-builder",
-        "build-dir": "electron-builder --dir"
+        "build-dir": "electron-builder --dir",
+        "release": "node scripts/release.js"
     },
     "build": {
         "asar": false,
